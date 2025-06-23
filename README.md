@@ -45,7 +45,7 @@ BigQuery quick intro lab (Cloud Skills Boost): <a target="_blank" href="https://
         END
       ) AS purchases
     FROM
-      `cotton-on-e41b2.analytics_195776711.events*`
+      `cotton-on-e41b2.analytics_195776711.events_20250622`
     GROUP BY event_name
 </pre>
 <strong>Gemini Prompt 1.1: Flatten event parameter values </strong>
