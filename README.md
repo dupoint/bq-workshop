@@ -18,7 +18,7 @@ BigQuery quick intro lab (Cloud Skills Boost): <a target="_blank" href="https://
   
 </ul>
 
-<h2>BigQuery Workshopi</h2>
+<h2>BigQuery Workshop</h2>
 <h3>SQL Queries</h3>
 <strong>Query 1: Get count of total GA4 events fired </strong>
 
