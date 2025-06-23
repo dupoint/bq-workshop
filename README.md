@@ -30,7 +30,18 @@ BigQuery quick intro lab (Cloud Skills Boost): <a target="_blank" href="https://
     FROM
       `cotton-on-e41b2.analytics_195776711.events_20250622`
 </pre>
+<strong>Query 1.5: Get count of total GA4 events by event name </strong>
 
+
+<pre>
+/* Count of total events */
+  SELECT
+    event_name,
+    COUNT(event_name) AS event_count
+    FROM      `cotton-on-e41b2.analytics_195776711.events_20250622`
+GROUP BY event_name
+ORDER BY event_count DESC
+</pre>
 <strong>Query 2: Get count of GA4 purchase events fired </strong>
 
 
