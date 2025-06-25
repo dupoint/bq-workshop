@@ -207,3 +207,9 @@ COUNT(
 
 FROM cte_flat 
 </pre>
+<strong>Prompt 2: </strong>
+/* Ecommmerce data query */
+<pre>
+get top selling items by total revenue broken down by weeks sorted by revenue descending
+</pre>pre>
+
