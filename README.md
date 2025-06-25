@@ -29,7 +29,18 @@ BigQuery quick intro lab (Cloud Skills Boost): <a target="_blank" href="https://
       COUNT(event_name) AS event_count
     FROM
       `cotton-on-e41b2.analytics_195776711.events_20250622`
+
+/* Count of AU only events */
+SELECT
+  COUNT(event_name) AS event_count
+FROM
+  `cotton-on-e41b2`.`analytics_195776711`.`events_20250622`,
+  UNNEST(event_params) AS ep
+WHERE
+  ep.key = 'megasite_region'
+  AND ep.value.string_value = 'AU'
 </pre>
+
 <strong>Query 1.5: Get count of total GA4 events by event name </strong>
 
 
