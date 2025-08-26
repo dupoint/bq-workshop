@@ -28,7 +28,7 @@ BigQuery quick intro lab (Cloud Skills Boost): <a target="_blank" href="https://
   SELECT
       COUNT(event_name) AS event_count
     FROM
-      `cotton-on-e41b2.analytics_195776711.events_20250622`
+      `think-bigquery.analytics_338032405.events_20250622`
 
 /* Count of AU only events */
 SELECT
@@ -49,7 +49,7 @@ WHERE
   SELECT
     event_name,
     COUNT(event_name) AS event_count
-    FROM      `cotton-on-e41b2.analytics_195776711.events_20250622`
+    FROM      `think-bigquery.analytics_338032405.events_20250622`
 GROUP BY event_name
 ORDER BY event_count DESC
 </pre>
@@ -67,7 +67,7 @@ ORDER BY event_count DESC
         END
       ) AS purchases
     FROM
-      `cotton-on-e41b2.analytics_195776711.events_20250622`
+      `think-bigquery.analytics_338032405.events_20250622`
     GROUP BY event_name
 </pre>
 <strong>Gemini Prompt 1.1: Flatten event parameter values </strong>
@@ -95,7 +95,7 @@ SELECT
     event_params.value.double_value AS ep_double,
     event_params.value.string_value AS ep_string
   FROM
-    `cotton-on-e41b2.analytics_195776711.events_20210106` AS events,
+    `think-bigquery.analytics_338032405.events_20210106` AS events,
     UNNEST(events.event_params) AS event_params;
 </pre>
 
@@ -113,7 +113,7 @@ SELECT
     event_params.value.double_value AS ep_double,
     event_params.value.string_value AS ep_string
   FROM
-    `cotton-on-e41b2.analytics_195776711.events_20210106` AS events,
+    `think-bigquery.analytics_338032405.events_20210106` AS events,
     UNNEST(events.event_params) AS event_params;
 ) 
 Get unique count of (user_pseudo_id concatanated with ep_int, WHEN ep_key =
@@ -135,7 +135,7 @@ WITH cte AS (
       event_params.value.string_value AS ep_string,
       events.user_pseudo_id
     FROM
-      `cotton-on-e41b2.analytics_195776711.events_20210106` AS events,
+      `think-bigquery.analytics_338032405.events_20210106` AS events,
       UNNEST(events.event_params) AS event_params
   )
 SELECT
@@ -171,7 +171,7 @@ SELECT
           )
         ) AS session_id
       FROM
-        `cotton-on-e41b2.analytics_195776711.events*`
+        `think-bigquery.analytics_338032405.events*`
       GROUP BY
         user_pseudo_id,
         session_id
@@ -183,7 +183,7 @@ SELECT
 <pre>
 <i>
  Get count of all events broken down by event_name and week (from event_date) from table:
- `cotton-on-e41b2.analytics_195776711.events*`
+ `think-bigquery.analytics_338032405.events*`
  order events by event count descending order and week ascending order. 
 Note that event_date is a string value, so convert this string to a date format with PARSE_DATE before extracting the week
   </i>
@@ -200,7 +200,7 @@ WITH cte_flat AS
     event_param.key AS pkey,
     event_param.value AS pvalue
   FROM
-    `cotton-on-e41b2.analytics_195776711.events*`,
+    `think-bigquery.analytics_338032405.events*`,
     UNNEST(event_params) AS event_param
   WHERE event_param.key IN(
     'ga_session_id', 'session_engaged', 'engagement_time_msec', 'ga_session_number'
