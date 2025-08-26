@@ -48,15 +48,15 @@ ORDER BY event_count DESC
 
 
 <pre>
-/* Count of purchase events */
+/* Count of contact-us events */
   SELECT
       event_name,
       SUM(
         CASE
-          WHEN event_name = 'purchase' THEN 1
+          WHEN event_name = 'contactUs' THEN 1
           ELSE 0
         END
-      ) AS purchases
+      ) AS contactUs
     FROM
       `think-bigquery.analytics_338032405.events_20250622`
     GROUP BY event_name
