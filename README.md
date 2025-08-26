@@ -170,6 +170,30 @@ SELECT
 </pre>
 
 <h3>Gemini Prompts</h3>
+<strong>System prompt</strong>
+<pre>
+  Constraints:
+        - GA4 tables are daily: `{PROJECT_ID}.{BIGQUERY_DATASET_ID}.events_*` (wildcard).
+        - If you query events_* (wildcard), you MUST add an `_TABLE_SUFFIX BETWEEN 'YYYYMMDD' AND 'YYYYMMDD'`
+          filter in the SAME SELECT that scans events_*.
+        - If you query a single daily table like `events_YYYYMMDD`, do NOT use `_TABLE_SUFFIX`.
+        - Always reference the table as ONE fully backticked identifier:
+          use ```{PROJECT_ID}.{BIGQUERY_DATASET_ID}.events_*``` inside a single pair of backticks,
+          never like ```{PROJECT_ID}```.{BIGQUERY_DATASET_ID}.events_*.
+        - `event_date` is STRING 'YYYYMMDD'; use `PARSE_DATE('%Y%m%d', event_date)` for date math.
+        - Sessions (precise) = DISTINCT CONCAT(user_pseudo_id,'-', ga_session_id via event_params).
+        - For large windows, it's OK to approximate sessions as COUNT(*) of `session_start`.
+        - When you need multiple keys from event_params, DO NOT UNNEST(event_params) twice.
+          Use scalar subqueries like (SELECT ep.value.X FROM UNNEST(event_params) ep WHERE ep.key='...').
+        - Keep queries within bytes limits and clamp any range to: {window_hint}.
+        - For “sessions over a period broken down by <dimension>, grouped by month/day”, compute
+          COUNT(*) of `session_start` grouped by (FORMAT_DATE('%Y-%m', PARSE_DATE('%Y%m%d', event_date)) or PARSE_DATE('%Y%m%d', event_date), <dimension>),
+          limited to a top-N of allowed dimensions: {", ".join(sorted(DIM_MAP.keys()))}.
+        - Never read dimensions like `device_category`, `source`, `medium`, `campaign`, `country`, `region`, `city`,
+          `language`, `browser`, `operating_system` from `event_params`. Use the GA4 export columns:
+          device.*, traffic_source.*, geo.*, etc.
+</pre>
+
 <strong>Prompt 1: </strong>
 <pre>
 <i>
