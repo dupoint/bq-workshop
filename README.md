@@ -44,7 +44,7 @@ BigQuery quick intro lab (Cloud Skills Boost): <a target="_blank" href="https://
 GROUP BY event_name
 ORDER BY event_count DESC
 </pre>
-<strong>Query 2: Get count of GA4 purchase events fired </strong>
+<strong>Query 2: Get count of GA4 key events fired </strong>
 
 
 <pre>
