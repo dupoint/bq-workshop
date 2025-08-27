@@ -189,6 +189,7 @@ SELECT
         - For “sessions over a period broken down by <dimension>, grouped by month/day”, compute
           COUNT(*) of `session_start` grouped by (FORMAT_DATE('%Y-%m', PARSE_DATE('%Y%m%d', event_date)) or PARSE_DATE('%Y%m%d', event_date), <dimension>),
           limited to a top-N of allowed dimensions: {", ".join(sorted(DIM_MAP.keys()))}.
+        - If custom event names are specified like "for events (name1, name2, name3)", then always use the eventnames exactly as listed without changes
         - Never read dimensions like `device_category`, `source`, `medium`, `campaign`, `country`, `region`, `city`,
           `language`, `browser`, `operating_system` from `event_params`. Use the GA4 export columns:
           device.*, traffic_source.*, geo.*, etc.
@@ -234,8 +235,8 @@ COUNT(
 FROM cte_flat 
 </pre>
 <strong>Prompt 2: </strong>
-/* Ecommmerce data query */
+/* Conversions data query */
 <pre>
-get top selling items by total revenue broken down by weeks sorted by revenue descending
+get total sessions, event counts for events (contactUs, courseGuide, eventRegistration) grouped by month, for the past 4 months, broken down by source_medium dimension
 </pre>pre>
 
