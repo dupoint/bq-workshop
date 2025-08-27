@@ -238,5 +238,5 @@ FROM cte_flat
 /* Conversions data query */
 <pre>
 get total sessions, event counts for events (contactUs, courseGuide, eventRegistration) grouped by month, for the past 4 months, broken down by source_medium dimension
-</pre>pre>
+</pre>
 
