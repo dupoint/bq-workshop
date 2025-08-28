@@ -239,4 +239,15 @@ FROM cte_flat
 <pre>
 get total sessions, event counts for events (contactUs, courseGuide, eventRegistration) grouped by month, for the past 4 months, broken down by source_medium dimension
 </pre>
+<strong>Visual Prompt 1: </strong>
+
+<pre>
+Area chart, plotting sessions (y axis) segmented by source dim over months (x axis)
+</pre>
+
+<strong>Visual Prompt 1: </strong>
+
+<pre>
+Area chart, plotting sessions (y axis) segmented by source dim over months (x axis), remove gaps in the data so the graphs are smooth, show dates in "MM-YYYY" format
+</pre>
 
