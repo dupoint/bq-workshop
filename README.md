@@ -245,9 +245,11 @@ get total sessions, event counts for events (contactUs, courseGuide, eventRegist
 Area chart, plotting sessions (y axis) segmented by source dim over months (x axis)
 </pre>
 
-<strong>Visual Prompt 1: </strong>
+<strong>Visual Prompt 2: </strong>
 
 <pre>
 Area chart, plotting sessions (y axis) segmented by source dim over months (x axis), remove gaps in the data so the graphs are smooth, show dates in "MM-YYYY" format
 </pre>
-
+<strong>Advanced analysis prompt: </strong>
+<pre>
+what source and medium combination generated the highest contactus events, and in which month?</pre>
