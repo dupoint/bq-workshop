@@ -195,13 +195,19 @@ SELECT
           device.*, traffic_source.*, geo.*, etc.
 </pre>
 
-<strong>Prompt 1: </strong>
+<strong>Prompt set 1: </strong>
 <pre>
 <i>
  Get count of all events broken down by event_name and week (from event_date) from table:
  `think-bigquery.analytics_338032405.events*`
  order events by event count descending order and week ascending order. 
-Note that event_date is a string value, so convert this string to a date format with PARSE_DATE before extracting the week
+  </i>
+</pre>
+<pre>
+<i>
+ Get count of all users and sessions from table:
+ `think-bigquery.analytics_338032405.events_*` grouping them by month for past 3 months, 
+ order by users descending order. 
   </i>
 </pre>
 
