@@ -28,17 +28,8 @@ BigQuery quick intro lab (Cloud Skills Boost): <a target="_blank" href="https://
   SELECT
       COUNT(event_name) AS event_count
     FROM
-      `cotton-on-e41b2.analytics_195776711.events_20250622`
+      `think-bigquery.analytics_338032405.events_20250622`
 
-/* Count of AU only events */
-SELECT
-  COUNT(event_name) AS event_count
-FROM
-  `cotton-on-e41b2`.`analytics_195776711`.`events_20250622`,
-  UNNEST(event_params) AS ep
-WHERE
-  ep.key = 'megasite_region'
-  AND ep.value.string_value = 'AU'
 </pre>
 
 <strong>Query 1.5: Get count of total GA4 events by event name </strong>
@@ -49,25 +40,25 @@ WHERE
   SELECT
     event_name,
     COUNT(event_name) AS event_count
-    FROM      `cotton-on-e41b2.analytics_195776711.events_20250622`
+    FROM      `think-bigquery.analytics_338032405.events_20250622`
 GROUP BY event_name
 ORDER BY event_count DESC
 </pre>
-<strong>Query 2: Get count of GA4 purchase events fired </strong>
+<strong>Query 2: Get count of GA4 key events fired </strong>
 
 
 <pre>
-/* Count of purchase events */
+/* Count of contact-us events */
   SELECT
       event_name,
       SUM(
         CASE
-          WHEN event_name = 'purchase' THEN 1
+          WHEN event_name = 'contactUs' THEN 1
           ELSE 0
         END
-      ) AS purchases
+      ) AS contactUs
     FROM
-      `cotton-on-e41b2.analytics_195776711.events_20250622`
+      `think-bigquery.analytics_338032405.events_20250622`
     GROUP BY event_name
 </pre>
 <strong>Gemini Prompt 1.1: Flatten event parameter values </strong>
@@ -95,7 +86,7 @@ SELECT
     event_params.value.double_value AS ep_double,
     event_params.value.string_value AS ep_string
   FROM
-    `cotton-on-e41b2.analytics_195776711.events_20210106` AS events,
+    `think-bigquery.analytics_338032405.events_20210106` AS events,
     UNNEST(events.event_params) AS event_params;
 </pre>
 
@@ -113,7 +104,7 @@ SELECT
     event_params.value.double_value AS ep_double,
     event_params.value.string_value AS ep_string
   FROM
-    `cotton-on-e41b2.analytics_195776711.events_20210106` AS events,
+    `think-bigquery.analytics_338032405.events_20210106` AS events,
     UNNEST(events.event_params) AS event_params;
 ) 
 Get unique count of (user_pseudo_id concatanated with ep_int, WHEN ep_key =
@@ -135,7 +126,7 @@ WITH cte AS (
       event_params.value.string_value AS ep_string,
       events.user_pseudo_id
     FROM
-      `cotton-on-e41b2.analytics_195776711.events_20210106` AS events,
+      `think-bigquery.analytics_338032405.events_20210106` AS events,
       UNNEST(events.event_params) AS event_params
   )
 SELECT
@@ -171,7 +162,7 @@ SELECT
           )
         ) AS session_id
       FROM
-        `cotton-on-e41b2.analytics_195776711.events*`
+        `think-bigquery.analytics_338032405.events*`
       GROUP BY
         user_pseudo_id,
         session_id
@@ -179,13 +170,44 @@ SELECT
 </pre>
 
 <h3>Gemini Prompts</h3>
-<strong>Prompt 1: </strong>
+<strong>System prompt</strong>
+<pre>
+  Constraints:
+        - GA4 tables are daily: `{PROJECT_ID}.{BIGQUERY_DATASET_ID}.events_*` (wildcard).
+        - If you query events_* (wildcard), you MUST add an `_TABLE_SUFFIX BETWEEN 'YYYYMMDD' AND 'YYYYMMDD'`
+          filter in the SAME SELECT that scans events_*.
+        - If you query a single daily table like `events_YYYYMMDD`, do NOT use `_TABLE_SUFFIX`.
+        - Always reference the table as ONE fully backticked identifier:
+          use ```{PROJECT_ID}.{BIGQUERY_DATASET_ID}.events_*``` inside a single pair of backticks,
+          never like ```{PROJECT_ID}```.{BIGQUERY_DATASET_ID}.events_*.
+        - `event_date` is STRING 'YYYYMMDD'; use `PARSE_DATE('%Y%m%d', event_date)` for date math.
+        - Sessions (precise) = DISTINCT CONCAT(user_pseudo_id,'-', ga_session_id via event_params).
+        - For large windows, it's OK to approximate sessions as COUNT(*) of `session_start`.
+        - When you need multiple keys from event_params, DO NOT UNNEST(event_params) twice.
+          Use scalar subqueries like (SELECT ep.value.X FROM UNNEST(event_params) ep WHERE ep.key='...').
+        - Keep queries within bytes limits and clamp any range to: {window_hint}.
+        - For “sessions over a period broken down by <dimension>, grouped by month/day”, compute
+          COUNT(*) of `session_start` grouped by (FORMAT_DATE('%Y-%m', PARSE_DATE('%Y%m%d', event_date)) or PARSE_DATE('%Y%m%d', event_date), <dimension>),
+          limited to a top-N of allowed dimensions: {", ".join(sorted(DIM_MAP.keys()))}.
+        - If custom event names are specified like "for events (name1, name2, name3)", then always use the eventnames exactly as listed without changes
+        - Never read dimensions like `device_category`, `source`, `medium`, `campaign`, `country`, `region`, `city`,
+          `language`, `browser`, `operating_system` from `event_params`. Use the GA4 export columns:
+          device.*, traffic_source.*, geo.*, etc.
+</pre>
+
+<strong>Prompt set 1: </strong>
 <pre>
 <i>
  Get count of all events broken down by event_name and week (from event_date) from table:
- `cotton-on-e41b2.analytics_195776711.events*`
+ `think-bigquery.analytics_338032405.events*`
  order events by event count descending order and week ascending order. 
-Note that event_date is a string value, so convert this string to a date format with PARSE_DATE before extracting the week
+  </i>
+</pre>
+<pre>
+<i>
+ Get count of all users and sessions from table:
+ `think-bigquery.analytics_338032405.events_*` grouping them by month for past 3 months, 
+ order by users descending order. 
   </i>
 </pre>
 
@@ -200,7 +222,7 @@ WITH cte_flat AS
     event_param.key AS pkey,
     event_param.value AS pvalue
   FROM
-    `cotton-on-e41b2.analytics_195776711.events*`,
+    `think-bigquery.analytics_338032405.events*`,
     UNNEST(event_params) AS event_param
   WHERE event_param.key IN(
     'ga_session_id', 'session_engaged', 'engagement_time_msec', 'ga_session_number'
@@ -219,8 +241,21 @@ COUNT(
 FROM cte_flat 
 </pre>
 <strong>Prompt 2: </strong>
-/* Ecommmerce data query */
+/* Conversions data query */
 <pre>
-get top selling items by total revenue broken down by weeks sorted by revenue descending
-</pre>pre>
+get total sessions, event counts for events (contactUs, courseGuide, eventRegistration) grouped by month, for the past 4 months, broken down by source_medium dimension
+</pre>
+<strong>Visual Prompt 1: </strong>
 
+<pre>
+Area chart, plotting sessions (y axis) segmented by source dim over months (x axis)
+</pre>
+
+<strong>Visual Prompt 2: </strong>
+
+<pre>
+Area chart, plotting sessions (y axis) segmented by source dim over months (x axis), remove gaps in the data so the graphs are smooth, show dates in "MM-YYYY" format
+</pre>
+<strong>Advanced analysis prompt: </strong>
+<pre>
+what source and medium combination generated the highest contactus events, and in which month?</pre>
